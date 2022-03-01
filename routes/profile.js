@@ -7,26 +7,27 @@ function profileRoutes() {
   const router = express.Router();
 
   router.get('/', isAuthenticated, async (req, res, next) => {
+    const userId = req.payload._id;
     try {
       const foundDogs = await Dog.find({ owner: req.payload._id });
-      res.json(user, foundDogs);
+      res.json(userId, foundDogs);
     } catch (e) {
       next(e);
     }
   });
 
-  router.get('/edit', async (req, res, next) => {
-    const user = req.session.currentUser._id;
+  router.get('/edit', isAuthenticated, async (req, res, next) => {
+    const userId = req.payload._id;
     try {
       const editUser = await User.findById(user);
-      res.json(user, editUser);
+      res.json(userId, editUser);
     } catch (e) {
       next(e);
     }
   });
 
-  router.post('/edit', async (req, res, next) => {
-    const userId = req.session.currentUser._id;
+  router.post('/edit', isAuthenticated, async (req, res, next) => {
+    const userId = req.payload._id;
     const { email, nickname, name, location, age } = req.body;
     try {
       const editedUser = await User.findByIdAndUpdate(userId, { email, nickname, name, location, age }, { new: true });

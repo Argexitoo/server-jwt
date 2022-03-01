@@ -10,8 +10,8 @@ function dogRoutes() {
   const router = express.Router();
 
   // VIEW MY DOGS
-  router.get('/', async (req, res, next) => {
-    const userId = req.session.currentUser._id;
+  router.get('/', isAuthenticated, async (req, res, next) => {
+    const userId = req.payload._id;
     try {
       const foundDogs = await Dog.find({ owner: userId });
       res.json(foundDogs);
@@ -45,6 +45,7 @@ function dogRoutes() {
       res.json(id, editDog);
       // res.render('./dog/update-form', { id, editDog });
     } catch (e) {
+      console.log(res.status());
       next(e);
     }
   });

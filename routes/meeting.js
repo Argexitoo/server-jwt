@@ -2,13 +2,14 @@ const express = require('express');
 const Dog = require('../models/Dog.model');
 const User = require('../models/User.model');
 const Meeting = require('../models/Meeting.model');
+const { isAuthenticated } = require('../middleware/jwt.middleware');
 
 function meetingRoutes() {
   const router = express.Router();
 
   // VIEW MEETINGS USER
-  router.get('/', async (req, res, next) => {
-    const userId = req.session.currentUser._id;
+  router.get('/', isAuthenticated, async (req, res, next) => {
+    const userId = req.payload._id;
     try {
       const allmeetings = await Meeting.find({});
       const myMeetings = await Meeting.find({ owner: userId });
@@ -21,8 +22,8 @@ function meetingRoutes() {
   });
 
   // ADD NEW MEETING
-  router.post('/add', async (req, res, next) => {
-    const userId = req.session.currentUser._id;
+  router.post('/add', isAuthenticated, async (req, res, next) => {
+    const userId = req.payload._id;
     const { name, location, date, hour, description } = req.body;
     try {
       if (!name || !location || !date || !hour || !description) {
@@ -92,8 +93,8 @@ function meetingRoutes() {
     }
   });
   // MEETING JOIN /// PREGUNTAR ALE REDIRECT , ROUTER.POST/get
-  router.post('/:id', async (req, res, next) => {
-    const user = req.session.currentUser;
+  router.post('/:id', isAuthenticated, async (req, res, next) => {
+    const userId = req.payload._id;
     const { id } = req.params;
     try {
       const meeting = await Meeting.findById(id);
@@ -101,15 +102,16 @@ function meetingRoutes() {
         meeting.usersJoined.push(user._id);
         meeting.save();
       }
-      return res.redirect('/mymeetings');
+      return;
+      // return res.redirect('/mymeetings');
     } catch (e) {
       next(e);
     }
   });
 
   // JOINED MEETINGS
-  router.get('/joinedmeetings', async (req, res, next) => {
-    const user = req.session.currentUser;
+  router.get('/joinedmeetings', isAuthenticated, async (req, res, next) => {
+    const userId = req.payload._id;
     try {
       const allmeetings = await Meeting.find({});
       const myMeetings = allmeetings.filter(meeting => meeting.usersJoined.includes(user._id));
