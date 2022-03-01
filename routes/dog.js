@@ -22,9 +22,7 @@ function dogRoutes() {
 
   // ADD NEW DOG
   router.post('/add', isAuthenticated, async (req, res, next) => {
-    console.log('Entering');
-    const userId = res.locals.user._id;
-    console.log(res.locals.user);
+    const userId = req.payload._id;
     const { name, sex, race, size, age, image } = req.body;
     try {
       if (!name || !sex || !race || !size || !age) {

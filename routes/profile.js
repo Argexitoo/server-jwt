@@ -7,9 +7,8 @@ function profileRoutes() {
   const router = express.Router();
 
   router.get('/', isAuthenticated, async (req, res, next) => {
-    const user = req.locals.user;
     try {
-      const foundDogs = await Dog.find({ owner: user._id });
+      const foundDogs = await Dog.find({ owner: req.payload._id });
       res.json(user, foundDogs);
     } catch (e) {
       next(e);
