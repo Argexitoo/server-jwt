@@ -30,9 +30,9 @@ function profileRoutes() {
 
   router.post('/:id', isAuthenticated, async (req, res, next) => {
     const userId = req.payload._id;
-    const { email, nickname, name, location, age } = req.body;
+    const { email, name, location, age } = req.body;
     try {
-      const editedUser = await User.findByIdAndUpdate(userId, { email, nickname, name, location, age }, { new: true });
+      const editedUser = await User.findByIdAndUpdate(userId, { email, name, location, age }, { new: true });
       req.payload._id = editedUser;
       return res.json(editedUser);
     } catch (e) {
