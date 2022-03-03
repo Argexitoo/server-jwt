@@ -8,13 +8,13 @@ function meetingRoutes() {
   const router = express.Router();
 
   // VIEW MEETINGS USER
-  router.get('/', isAuthenticated, async (req, res, next) => {
+  router.get('/myMeetings', isAuthenticated, async (req, res, next) => {
     const userId = req.payload._id;
     try {
       const allmeetings = await Meeting.find({});
       const myMeetings = await Meeting.find({ owner: userId });
       const joinedMeetings = allmeetings.filter(meeting => meeting.usersJoined.includes(userId));
-      res.json(myMeetings, joinedMeetings);
+      res.json({ myMeetings, joinedMeetings });
       // res.render('./meeting/mymeetings', { myMeetings, joinedMeetings });
     } catch (e) {
       next(e);
@@ -44,7 +44,7 @@ function meetingRoutes() {
     const { id } = req.params;
     try {
       const editMeeting = await Meeting.findById(id);
-      res.json(id, editMeeting);
+      res.json({ id, editMeeting });
       // res.render('./meeting/update-form-meeting', { id, editMeeting });
     } catch (e) {
       next(e);
@@ -77,7 +77,7 @@ function meetingRoutes() {
     const { id } = req.params;
     try {
       const foundMeetings = await Meeting.find();
-      res.json(foundMeetings);
+      res.json({ foundMeetings });
     } catch (e) {
       next(e);
     }
@@ -92,17 +92,17 @@ function meetingRoutes() {
       next(e);
     }
   });
-  // MEETING JOIN /// PREGUNTAR ALE REDIRECT , ROUTER.POST/get
-  router.post('/:id', isAuthenticated, async (req, res, next) => {
+  // MEETING JOIN
+  router.post('/join/:id', isAuthenticated, async (req, res, next) => {
     const userId = req.payload._id;
     const { id } = req.params;
     try {
       const meeting = await Meeting.findById(id);
-      if (!meeting.usersJoined.includes(user._id)) {
-        meeting.usersJoined.push(user._id);
+      if (!meeting.usersJoined.includes(userId)) {
+        meeting.usersJoined.push(userId);
         meeting.save();
       }
-      return;
+      return res.json({ joined: meeting });
       // return res.redirect('/mymeetings');
     } catch (e) {
       next(e);
@@ -110,13 +110,13 @@ function meetingRoutes() {
   });
 
   // JOINED MEETINGS
-  router.get('/joinedmeetings', isAuthenticated, async (req, res, next) => {
+  router.get('/joined', isAuthenticated, async (req, res, next) => {
     const userId = req.payload._id;
     try {
       const allmeetings = await Meeting.find({});
-      const myMeetings = allmeetings.filter(meeting => meeting.usersJoined.includes(user._id));
+      const myMeetings = allmeetings.filter(meeting => meeting.usersJoined.includes(userId));
       // mymeetings objecte que conté els meus meetings
-      console.log(mymeetings);
+      console.log(myMeetings);
       return res.json(myMeetings);
     } catch (e) {
       next(e);
