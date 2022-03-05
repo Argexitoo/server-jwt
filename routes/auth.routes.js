@@ -9,10 +9,10 @@ const saltRounds = 10;
 
 // POST  /auth/signup
 router.post('/signup', (req, res, next) => {
-  const { email, password, password2, location, age, name } = req.body;
+  const { email, password, location, age, name } = req.body;
 
   // Check if email or password or name are provided as empty string
-  if (email === '' || password === '' || password2 === '' || location === '' || age === '' || name === '') {
+  if (email === '' || password === '' || location === '' || age === '' || name === '') {
     res.status(400).json({ message: 'Complete all fields' });
     return;
   }
@@ -33,12 +33,6 @@ router.post('/signup', (req, res, next) => {
     return;
   }
 
-  if (password !== password2) {
-    res.status(400).json({
-      message: 'Password not identical',
-    });
-  }
-
   // Check the users collection if a user with the same email already exists
   User.findOne({ email })
     .then(foundUser => {
@@ -54,7 +48,7 @@ router.post('/signup', (req, res, next) => {
 
       // Create the new user in the database
       // We return a pending promise, which allows us to chain another `then`
-      return User.create({ email, password: hashedPassword, password2: hashedPassword, location, age, name });
+      return User.create({ email, password: hashedPassword, location, age, name });
     })
     .then(createdUser => {
       // Deconstruct the newly created user object to omit the password

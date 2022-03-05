@@ -3,6 +3,7 @@ const Dog = require('../models/Dog.model');
 const User = require('../models/User.model');
 const Meeting = require('../models/Meeting.model');
 const { isAuthenticated } = require('../middleware/jwt.middleware');
+const protectedRoute = require('../routes/protected.routes');
 
 function meetingRoutes() {
   const router = express.Router();
@@ -15,7 +16,6 @@ function meetingRoutes() {
       const myMeetings = await Meeting.find({ owner: userId });
       const joinedMeetings = allmeetings.filter(meeting => meeting.usersJoined.includes(userId));
       res.json({ myMeetings, joinedMeetings });
-      // res.render('./meeting/mymeetings', { myMeetings, joinedMeetings });
     } catch (e) {
       next(e);
     }
