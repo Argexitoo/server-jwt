@@ -51,7 +51,7 @@ function meetingRoutes() {
     }
   });
 
-  router.post('/:id', async (req, res, next) => {
+  router.put('/:id', async (req, res, next) => {
     const { id } = req.params;
     const { name, location, date, hour, description } = req.body;
     try {
@@ -77,7 +77,7 @@ function meetingRoutes() {
     const { id } = req.params;
     try {
       const foundMeetings = await Meeting.find();
-      res.json({ foundMeetings });
+      res.json(foundMeetings);
     } catch (e) {
       next(e);
     }

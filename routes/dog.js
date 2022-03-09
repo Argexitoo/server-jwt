@@ -41,16 +41,15 @@ function dogRoutes() {
   router.get('/:id', async (req, res, next) => {
     const { id } = req.params;
     try {
-      const editDog = await Dog.findById(id);
-      res.json(id, editDog);
-      // res.render('./dog/update-form', { id, editDog });
+      const dog = await Dog.findById(id);
+      res.json(dog);
     } catch (e) {
       console.log(res.status());
       next(e);
     }
   });
 
-  router.post('/:id', async (req, res, next) => {
+  router.put('/:id', async (req, res, next) => {
     const { id } = req.params;
     const { name, sex, race, size, age, image } = req.body;
     try {

@@ -17,9 +17,9 @@ require('./config')(app);
 // app.use('/api', allRoutes);
 // app.use('/api/protected', isAuthenticated, protectedRoute);
 app.use('/auth', authRouter);
-app.use('/dog', protectedRoute, dogRoutes());
-app.use('/profile', protectedRoute, profileRoutes());
-app.use('/meetings', meetingRoutes());
+app.use('/dog', isAuthenticated, dogRoutes());
+app.use('/profile', isAuthenticated, profileRoutes());
+app.use('/meetings', isAuthenticated, meetingRoutes());
 
 require('./error-handling')(app);
 
