@@ -17,6 +17,16 @@ function profileRoutes() {
     }
   });
 
+  router.get('/user', isAuthenticated, async (req, res, next) => {
+    const userId = req.payload._id;
+    try {
+      const user = await User.findById(userId);
+      res.json(user);
+    } catch (e) {
+      next(e);
+    }
+  });
+
   router.get('/:id', isAuthenticated, async (req, res, next) => {
     const userId = req.payload._id;
     try {

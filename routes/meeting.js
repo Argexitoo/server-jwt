@@ -15,7 +15,8 @@ function meetingRoutes() {
       const allmeetings = await Meeting.find({});
       const myMeetings = await Meeting.find({ owner: userId });
       const joinedMeetings = allmeetings.filter(meeting => meeting.usersJoined.includes(userId));
-      res.json({ myMeetings, joinedMeetings });
+      res.json(myMeetings);
+      // res.json({myMeetings, joinedMeetings});
     } catch (e) {
       next(e);
     }
@@ -83,7 +84,7 @@ function meetingRoutes() {
     }
   });
   // VIEW MEETING ID
-  router.get('/:id', async (req, res, next) => {
+  router.get('/:id/info', async (req, res, next) => {
     const { id } = req.params;
     try {
       const meeting = await Meeting.findById(id).populate('usersJoined').populate('owner');
@@ -93,7 +94,7 @@ function meetingRoutes() {
     }
   });
   // MEETING JOIN
-  router.post('/join/:id', isAuthenticated, async (req, res, next) => {
+  router.post('/:id/join', isAuthenticated, async (req, res, next) => {
     const userId = req.payload._id;
     const { id } = req.params;
     try {
