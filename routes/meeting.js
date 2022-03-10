@@ -111,14 +111,14 @@ function meetingRoutes() {
   });
 
   // JOINED MEETINGS
-  router.get('/joined', isAuthenticated, async (req, res, next) => {
+  router.get('/:id/joined', isAuthenticated, async (req, res, next) => {
     const userId = req.payload._id;
+    const { id } = req.params;
     try {
-      const allmeetings = await Meeting.find({});
-      const myMeetings = allmeetings.filter(meeting => meeting.usersJoined.includes(userId));
+      const meeting = await Meeting.findById(id).populate('usersJoined');
       // mymeetings objecte que conté els meus meetings
-      console.log(myMeetings);
-      return res.json(myMeetings);
+      console.log(meeting);
+      return res.json(meeting);
     } catch (e) {
       next(e);
     }
