@@ -1,3 +1,4 @@
+const { type } = require('express/lib/response');
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
@@ -13,7 +14,9 @@ const userSchema = new Schema({
     required: true,
   },
   name: { type: String, required: true },
+  nickName: { type: String, required: true, unique: true },
   image: { type: String },
+  description: { type: String },
 });
 
 module.exports = model('User', userSchema);

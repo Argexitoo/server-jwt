@@ -20,6 +20,16 @@ function dogRoutes() {
     }
   });
 
+  router.get('/users/:id', isAuthenticated, async (req, res, next) => {
+    const { id } = req.params;
+    try {
+      const foundDogs = await Dog.find({ owner: id });
+      res.json(foundDogs);
+    } catch (e) {
+      next(e);
+    }
+  });
+
   // ADD NEW DOG
   router.post('/add', isAuthenticated, async (req, res, next) => {
     const userId = req.payload._id;

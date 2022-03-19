@@ -27,6 +27,27 @@ function profileRoutes() {
     }
   });
 
+  //  PROFILE OF OTHERS USERS
+
+  router.get('/users', isAuthenticated, async (req, res, next) => {
+    try {
+      const user = await User.find();
+      res.json(user);
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  router.get('/:id/info', isAuthenticated, async (req, res, next) => {
+    const { id } = req.params;
+    try {
+      const userInfo = await User.findById(id);
+      res.json(userInfo);
+    } catch (e) {
+      next(e);
+    }
+  });
+
   router.get('/:id', isAuthenticated, async (req, res, next) => {
     const userId = req.payload._id;
     try {
@@ -40,9 +61,9 @@ function profileRoutes() {
 
   router.post('/:id', isAuthenticated, async (req, res, next) => {
     const userId = req.payload._id;
-    const { email, name, location, age, image } = req.body;
+    const { email, name, location, age, image, description } = req.body;
     try {
-      const editedUser = await User.findByIdAndUpdate(userId, { email, name, location, age, image }, { new: true });
+      const editedUser = await User.findByIdAndUpdate(userId, { email, name, location, age, image, description }, { new: true });
       req.payload._id = editedUser;
       return res.json(editedUser);
     } catch (e) {

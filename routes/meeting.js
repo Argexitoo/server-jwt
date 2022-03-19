@@ -76,8 +76,10 @@ function meetingRoutes() {
   // VIEW ALL MEETINGS
   router.get('/', async (req, res, next) => {
     const { id } = req.params;
+    const date = new Date();
     try {
       const foundMeetings = await Meeting.find();
+      if (foundMeetings.date < date) console.log('time', foundMeetings.date), {};
       res.json(foundMeetings);
     } catch (e) {
       next(e);
@@ -119,6 +121,22 @@ function meetingRoutes() {
       // mymeetings objecte que conté els meus meetings
       console.log(meeting);
       return res.json(meeting);
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  router.post('/:id/unjoin', isAuthenticated, async (req, res, next) => {
+    const userId = req.payload._id;
+    const { id } = req.params;
+    try {
+      const meeting = await Meeting.findById(id);
+      if (meeting.usersJoined.includes(userId)) {
+        const index = meeting.usersJoined.indexOf(userId);
+        meeting.usersJoined.splice(index, 1);
+        meeting.save();
+      }
+      return res.json({ unjoined: meeting });
     } catch (e) {
       next(e);
     }

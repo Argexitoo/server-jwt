@@ -9,10 +9,10 @@ const saltRounds = 10;
 
 // POST  /auth/signup
 router.post('/signup', (req, res, next) => {
-  const { email, password, location, age, name } = req.body;
+  const { email, password, location, age, name, nickName } = req.body;
 
   // Check if email or password or name are provided as empty string
-  if (email === '' || password === '' || location === '' || age === '' || name === '') {
+  if (email === '' || password === '' || location === '' || age === '' || name === '' || nickName === '') {
     res.status(400).json({ message: 'Complete all fields' });
     return;
   }
@@ -32,7 +32,13 @@ router.post('/signup', (req, res, next) => {
     });
     return;
   }
-
+  User.findOne({ nickName }).then(foundUser => {
+    // If the user with the same email already exists, send an error response
+    if (foundUser) {
+      res.status(400).json({ message: 'Nickname already exists.' });
+      return;
+    }
+  });
   // Check the users collection if a user with the same email already exists
   User.findOne({ email })
     .then(foundUser => {
@@ -48,15 +54,15 @@ router.post('/signup', (req, res, next) => {
 
       // Create the new user in the database
       // We return a pending promise, which allows us to chain another `then`
-      return User.create({ email, password: hashedPassword, location, age, name });
+      return User.create({ email, password: hashedPassword, location, age, name, nickName });
     })
     .then(createdUser => {
       // Deconstruct the newly created user object to omit the password
       // We should never expose passwords publicly
-      const { email, name, location, age, _id } = createdUser;
+      const { email, name, location, age, nickName, _id } = createdUser;
 
       // Create a new object that doesn't expose the password
-      const user = { email, name, location, age, _id };
+      const user = { email, name, location, age, nickName, _id };
 
       // Send a json response containing the user object
       res.status(201).json({ user: user });
