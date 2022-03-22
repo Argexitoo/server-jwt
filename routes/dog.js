@@ -64,7 +64,7 @@ function dogRoutes() {
     const { name, sex, race, size, age, image } = req.body;
     try {
       const editDog = await Dog.findByIdAndUpdate(id, { name, sex, race, size, age, image }, { new: true });
-      return res.json(editDog);
+      res.json(editDog);
     } catch (e) {
       next(e);
     }

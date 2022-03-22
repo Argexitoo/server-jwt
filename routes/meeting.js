@@ -1,9 +1,6 @@
 const express = require('express');
-const Dog = require('../models/Dog.model');
-const User = require('../models/User.model');
 const Meeting = require('../models/Meeting.model');
 const { isAuthenticated } = require('../middleware/jwt.middleware');
-const protectedRoute = require('../routes/protected.routes');
 
 function meetingRoutes() {
   const router = express.Router();
@@ -12,11 +9,19 @@ function meetingRoutes() {
   router.get('/myMeetings', isAuthenticated, async (req, res, next) => {
     const userId = req.payload._id;
     try {
-      const allmeetings = await Meeting.find({});
       const myMeetings = await Meeting.find({ owner: userId });
+      return res.json(myMeetings);
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  router.get('/joined', isAuthenticated, async (req, res, next) => {
+    const userId = req.payload._id;
+    try {
+      const allmeetings = await Meeting.find({ usersJoined: userId });
       const joinedMeetings = allmeetings.filter(meeting => meeting.usersJoined.includes(userId));
-      res.json(myMeetings);
-      // res.json({myMeetings, joinedMeetings});
+      return res.json(joinedMeetings);
     } catch (e) {
       next(e);
     }
@@ -75,11 +80,8 @@ function meetingRoutes() {
   });
   // VIEW ALL MEETINGS
   router.get('/', async (req, res, next) => {
-    const { id } = req.params;
-    const date = new Date();
     try {
       const foundMeetings = await Meeting.find();
-      if (foundMeetings.date < date) console.log('time', foundMeetings.date), {};
       res.json(foundMeetings);
     } catch (e) {
       next(e);
@@ -107,20 +109,6 @@ function meetingRoutes() {
       }
       return res.json({ joined: meeting });
       // return res.redirect('/mymeetings');
-    } catch (e) {
-      next(e);
-    }
-  });
-
-  // JOINED MEETINGS
-  router.get('/:id/joined', isAuthenticated, async (req, res, next) => {
-    const userId = req.payload._id;
-    const { id } = req.params;
-    try {
-      const meeting = await Meeting.findById(id).populate('usersJoined');
-      // mymeetings objecte que conté els meus meetings
-      console.log(meeting);
-      return res.json(meeting);
     } catch (e) {
       next(e);
     }
