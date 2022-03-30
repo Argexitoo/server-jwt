@@ -51,7 +51,6 @@ function meetingRoutes() {
     try {
       const editMeeting = await Meeting.findById(id);
       res.json({ id, editMeeting });
-      // res.render('./meeting/update-form-meeting', { id, editMeeting });
     } catch (e) {
       next(e);
     }

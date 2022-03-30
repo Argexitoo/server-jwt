@@ -2,10 +2,6 @@ const express = require('express');
 const { isAuthenticated } = require('../middleware/jwt.middleware');
 const Dog = require('../models/Dog.model');
 
-// const User = require('../models/user');
-// const Meeting = require('../models/meeting');
-// const isLoggedIn = require('../middlewares');
-
 function dogRoutes() {
   const router = express.Router();
 
